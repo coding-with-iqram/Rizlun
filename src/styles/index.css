@@ -1,12 +1,378 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Inter;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables for Luxury Theme */
+:root {
+  /* Primary Colors - Warm Neutrals */
+  --color-background: #fefcf8; /* Soft ivory */
+  --color-foreground: #2c1810; /* Deep charcoal */
+  --color-surface: #faf8f4; /* Subtle warmth */
+  
+  /* Primary Brand Colors */
+  --color-primary: #8b5a3c; /* Rich umber */
+  --color-primary-foreground: #fefcf8; /* Soft ivory */
+  
+  /* Secondary Colors */
+  --color-secondary: #d4af37; /* Warm amber/gold */
+  --color-secondary-foreground: #fefcf8; /* Soft ivory */
+  
+  /* Accent Colors */
+  --color-accent: #d4af37; /* Refined gold */
+  --color-accent-foreground: #8b5a3c; /* Rich umber */
+  
+  /* Text Colors */
+  --color-text-primary: #2c1810; /* Deep charcoal */
+  --color-text-secondary: #6b5b5b; /* Balanced gray */
+  
+  /* Neutral Tones */
+  --color-muted: #f5f2ed; /* Subtle warmth */
+  --color-muted-foreground: #6b5b5b; /* Balanced gray */
+  
+  /* Interactive Elements */
+  --color-border: #e8e2d9; /* Warm neutral border */
+  --color-input: #faf8f4; /* Subtle warm input */
+  --color-ring: #d4af37; /* Gold focus ring */
+  
+  /* Card & Popover */
+  --color-card: #faf8f4; /* Subtle warmth */
+  --color-card-foreground: #2c1810; /* Deep charcoal */
+  --color-popover: #ffffff; /* Pure white */
+  --color-popover-foreground: #2c1810; /* Deep charcoal */
+  
+  /* Status Colors */
+  --color-success: #2d5016; /* Forest green */
+  --color-success-foreground: #fefcf8; /* Soft ivory */
+  --color-warning: #b8860b; /* Dark goldenrod */
+  --color-warning-foreground: #fefcf8; /* Soft ivory */
+  --color-error: #722f37; /* Deep burgundy */
+  --color-error-foreground: #fefcf8; /* Soft ivory */
+  --color-destructive: #722f37; /* Deep burgundy */
+  --color-destructive-foreground: #fefcf8; /* Soft ivory */
+  
+  /* Border Radius */
+  --radius: 0.5rem;
 }
 
+/* Base Styles */
 * {
   box-sizing: border-box;
   line-height: normal;
   font-family: inherit;
-  margin: unset;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+.font-accent {
+  font-family: 'Dancing Script', cursive;
+}
+
+/* Luxury Button Styles */
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-luxury;
+  }
+  
+  .btn-secondary {
+    @apply bg-transparent border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium py-3 px-6 rounded-lg transition-all duration-300;
+  }
+  
+  .btn-accent {
+    @apply bg-accent hover:bg-accent/90 text-accent-foreground font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent hover:bg-muted text-text-primary font-medium py-3 px-6 rounded-lg transition-all duration-300;
+  }
+}
+
+/* Card Styles */
+.luxury-card {
+  @apply bg-card border border-border rounded-lg shadow-luxury hover:shadow-luxury-lg transition-all duration-400 backdrop-blur-sm;
+}
+
+.product-card {
+  @apply luxury-card p-6 group cursor-pointer transform hover:scale-105 transition-all duration-400;
+}
+
+/* Input Styles */
+.luxury-input {
+  @apply w-full px-4 py-3 bg-input border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-300 text-text-primary placeholder-text-secondary;
+}
+
+/* Glass Effect */
+.glass-effect {
+  @apply backdrop-blur-md bg-white/10 border border-white/20;
+}
+
+/* Gradient Overlays */
+.gradient-overlay {
+  background: linear-gradient(135deg, rgba(139, 90, 60, 0.1) 0%, rgba(212, 175, 55, 0.1) 100%);
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Perfume Bottle Animation */
+@keyframes bottle-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
+  }
+}
+
+.bottle-glow {
+  animation: bottle-glow 3s ease-in-out infinite;
+}
+
+/* Scent Trail Animation */
+@keyframes scent-trail {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(1.2);
+  }
+}
+
+.scent-trail {
+  animation: scent-trail 2s ease-out infinite;
+}
+
+/* Loading States */
+.loading-pulse {
+  @apply animate-pulse bg-muted;
+}
+
+/* Hover Effects */
+.hover-lift {
+  @apply transform transition-transform duration-300 hover:-translate-y-2;
+}
+
+.hover-glow {
+  @apply transition-shadow duration-300 hover:shadow-luxury-xl;
+}
+
+/* Rating Stars */
+.star-rating {
+  @apply flex items-center gap-1;
+}
+
+.star-filled {
+  @apply text-accent;
+}
+
+.star-empty {
+  @apply text-muted-foreground;
+}
+
+/* Progress Indicators */
+.progress-bar {
+  @apply w-full bg-muted rounded-full h-2;
+}
+
+.progress-fill {
+  @apply h-full bg-accent rounded-full transition-all duration-500;
+}
+
+/* Toast Notifications */
+.toast-success {
+  @apply bg-success text-success-foreground;
+}
+
+.toast-error {
+  @apply bg-error text-error-foreground;
+}
+
+.toast-warning {
+  @apply bg-warning text-warning-foreground;
+}
+
+/* Modal & Overlay */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+}
+
+.modal-content {
+  @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg shadow-luxury-xl z-50 max-h-[90vh] overflow-y-auto;
+}
+
+/* Responsive Design Helpers */
+.container-luxury {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12;
+}
+
+/* Perfume Specific Styles */
+.scent-pyramid {
+  @apply relative;
+}
+
+.scent-notes {
+  @apply grid gap-4;
+}
+
+.note-category {
+  @apply p-4 rounded-lg border border-border bg-card/50;
+}
+
+/* Quiz Styles */
+.quiz-option {
+  @apply p-4 border-2 border-border rounded-lg cursor-pointer transition-all duration-300 hover:border-accent hover:bg-accent/5;
+}
+
+.quiz-option.selected {
+  @apply border-accent bg-accent/10;
+}
+
+/* Cart Styles */
+.cart-item {
+  @apply flex items-center gap-4 p-4 border-b border-border last:border-b-0;
+}
+
+.quantity-selector {
+  @apply flex items-center gap-2 border border-border rounded-lg;
+}
+
+.quantity-btn {
+  @apply w-8 h-8 flex items-center justify-center bg-muted hover:bg-accent hover:text-accent-foreground transition-colors duration-200;
+}
+
+/* Footer Styles */
+.footer-section {
+  @apply space-y-4;
+}
+
+.footer-link {
+  @apply text-text-secondary hover:text-accent transition-colors duration-200;
+}
+
+/* Badge Styles */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  @apply bg-primary text-primary-foreground;
+}
+
+.badge-secondary {
+  @apply bg-secondary text-secondary-foreground;
+}
+
+.badge-success {
+  @apply bg-success text-success-foreground;
+}
+
+/* Image Gallery Styles */
+.image-gallery-slide img {
+  @apply object-cover rounded-lg;
+}
+
+.image-gallery-thumbnails {
+  @apply gap-2;
+}
+
+.image-gallery-thumbnail {
+  @apply border-2 border-transparent hover:border-accent transition-colors duration-200;
+}
+
+.image-gallery-thumbnail.active {
+  @apply border-accent;
+}
+
+/* Swiper Customization */
+.swiper-pagination-bullet {
+  @apply bg-accent;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  @apply text-accent;
+}
+
+/* Mobile Specific */
+@media (max-width: 768px) {
+  .container-luxury {
+    @apply px-4;
+  }
+  
+  .btn-primary,
+  .btn-secondary,
+  .btn-accent {
+    @apply py-2.5 px-5 text-sm;
+  }
+  
+  .luxury-input {
+    @apply py-2.5 px-3 text-base; /* Prevents zoom on iOS */
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .luxury-card {
+    @apply shadow-luxury-lg;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #1a1611;
+    --color-foreground: #f5f2ed;
+    --color-surface: #211c17;
+    --color-card: #211c17;
+    --color-muted: #2a2520;
+    --color-border: #3a342b;
+    --color-input: #2a2520;
+    --color-text-primary: #f5f2ed;
+    --color-text-secondary: #a8a29e;
+  }
 }
