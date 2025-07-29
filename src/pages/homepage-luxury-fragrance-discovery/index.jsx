@@ -1,30 +1,36 @@
 import React from 'react';
-import Header from '../../components/ui/Header';
 import HeroSection from './components/HeroSection';
 import FeaturedFragranceCarousel from './components/FeaturedFragranceCarousel';
-import ScentStorySection from './components/ScentStorySection';
-// import PerfumerSpotlight from './components/PerfumerSpotlight';
-// import CommunitySection from './components/CommunitySection';
-import TrustSection from './components/TrustSection';
+import ProductsSection from './components/ProductsSection';
 import Footer from './components/Footer';
+import { useCart } from '../../contexts/CartContext';
 
-const HomepageLuxuryFragranceDiscovery = () => {
+const Homepage = () => {
+  const { addToCart, addToWishlist } = useCart();
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    // You could add a toast notification here
+    console.log('Added to cart:', product);
+  };
+
+  const handleAddToWishlist = (product) => {
+    addToWishlist(product);
+    // You could add a toast notification here
+    console.log('Added to wishlist:', product);
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main>
-        <HeroSection />
-        <FeaturedFragranceCarousel />
-        <ScentStorySection />
-        {/* <PerfumerSpotlight /> */}
-        {/* <CommunitySection /> */}
-        <TrustSection />
-      </main>
-      
+      <HeroSection />
+      <FeaturedFragranceCarousel />
+      <ProductsSection 
+        onAddToCart={handleAddToCart}
+        onAddToWishlist={handleAddToWishlist}
+      />
       <Footer />
     </div>
   );
 };
 
-export default HomepageLuxuryFragranceDiscovery;
+export default Homepage;

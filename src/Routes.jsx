@@ -1,48 +1,44 @@
-import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
-import ScrollToTop from "components/ScrollToTop";
-import ErrorBoundary from "components/ErrorBoundary";
+import React, { Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import ErrorBoundary from './components/ErrorBoundary';
+import ScrollToTop from './components/ScrollToTop';
 
-// 🔄 Lazy-loaded pages
-const HomepageLuxuryFragranceDiscovery = lazy(() =>
-  import("pages/homepage-luxury-fragrance-discovery")
-);
-const CollectionsGallery = lazy(() => import("pages/collections-gallery"));
-const FragranceDiscoveryTool = lazy(() => import("pages/fragrance-discovery-tool"));
-const IndividualFragranceExperience = lazy(() =>
-  import("pages/individual-fragrance-experience")
-);
-const ShoppingCartCheckout = lazy(() => import("pages/shopping-cart-checkout"));
-const PersonalFragranceProfile = lazy(() => import("pages/personal-fragrance-profile"));
-const NotFound = lazy(() => import("pages/NotFound"));
+// Lazy load pages for better performance
+const Homepage = React.lazy(() => import('./pages/homepage-luxury-fragrance-discovery'));
+const CollectionsGallery = React.lazy(() => import('./pages/collections-gallery'));
+const FragranceDiscoveryTool = React.lazy(() => import('./pages/fragrance-discovery-tool'));
+const PersonalFragranceProfile = React.lazy(() => import('./pages/personal-fragrance-profile'));
+const IndividualFragranceExperience = React.lazy(() => import('./pages/individual-fragrance-experience'));
+const ShoppingCartCheckout = React.lazy(() => import('./pages/shopping-cart-checkout'));
+const Checkout = React.lazy(() => import('./pages/checkout'));
+const NotFound = React.lazy(() => import('./pages/NotFound'));
 
-// 🔄 Fallback loader
-const Loading = () => (
-  <div className="h-screen flex justify-center items-center text-xl text-gray-600">
-    Loading...
-  </div>
-);
-
-const Routes = () => {
+const AppRoutes = () => {
   return (
-    <BrowserRouter>
-      <ErrorBoundary>
-        <ScrollToTop />
-        <Suspense fallback={<Loading />}>
-          <RouterRoutes>
-            <Route path="/" element={<HomepageLuxuryFragranceDiscovery />} />
-            <Route path="/homepage-luxury-fragrance-discovery" element={<HomepageLuxuryFragranceDiscovery />} />
-            <Route path="/collections-gallery" element={<CollectionsGallery />} />
-            <Route path="/fragrance-discovery-tool" element={<FragranceDiscoveryTool />} />
-            <Route path="/individual-fragrance-experience" element={<IndividualFragranceExperience />} />
-            <Route path="/shopping-cart-checkout" element={<ShoppingCartCheckout />} />
-            <Route path="/personal-fragrance-profile" element={<PersonalFragranceProfile />} />
-            <Route path="*" element={<NotFound />} />
-          </RouterRoutes>
-        </Suspense>
-      </ErrorBoundary>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <ScrollToTop />
+      <Suspense fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
+            <p className="text-text-secondary font-body">Loading...</p>
+          </div>
+        </div>
+      }>
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/homepage-luxury-fragrance-discovery" element={<Homepage />} />
+          <Route path="/collections-gallery" element={<CollectionsGallery />} />
+          <Route path="/fragrance-discovery-tool" element={<FragranceDiscoveryTool />} />
+          <Route path="/personal-fragrance-profile" element={<PersonalFragranceProfile />} />
+          <Route path="/individual-fragrance-experience/:id?" element={<IndividualFragranceExperience />} />
+          <Route path="/shopping-cart-checkout" element={<ShoppingCartCheckout />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 
-export default Routes;
+export default AppRoutes;

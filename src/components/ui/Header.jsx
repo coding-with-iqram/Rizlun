@@ -2,173 +2,176 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from '../AppIcon';
 import Button from './Button';
+import { useCart } from '../../contexts/CartContext';
+import Cart from '../Cart';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { cartItemCount, setCartVisible, isCartVisible } = useCart();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navigationItems = [
-    {
-      name: 'Discover',
-      path: '/fragrance-discovery-tool',
-      icon: 'Search'
-    },
-    {
-      name: 'Collections',
-      path: '/collections-gallery',
-      icon: 'Grid3X3'
-    },
-    {
-      name: 'Profile',
-      path: '/personal-fragrance-profile',
-      icon: 'User'
-    },
-    {
-      name: 'Cart',
-      path: '/shopping-cart-checkout',
-      icon: 'ShoppingBag'
-    }
+  const navigation = [
+    { name: 'Home', href: '/homepage-luxury-fragrance-discovery' },
+    { name: 'Collections', href: '/collections-gallery' },
+    { name: 'Discovery Tool', href: '/fragrance-discovery-tool' },
+    { name: 'Profile', href: '/personal-fragrance-profile' },
+    { name: 'About Us', href: '/about' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Reviews', href: '/reviews' },
   ];
 
-  const isActivePath = (path) => {
-    return location.pathname === path;
-  };
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-background/95 backdrop-blur-md shadow-luxury border-b border-border' 
-        : 'bg-transparent'
-    }`}>
-      <div className="w-full">
-        <div className="flex items-center justify-between h-16 px-4 lg:px-8">
-          {/* Logo */}
-          <Link 
-            to="/homepage-luxury-fragrance-discovery" 
-            className="flex items-center space-x-3 scent-trail group"
-          >
-            <div className="relative">
-              <svg 
-                width="40" 
-                height="40" 
-                viewBox="0 0 40 40" 
-                className="transition-transform duration-300 group-hover:scale-105"
-              >
-                <defs>
-                  <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="var(--color-accent)" />
-                    <stop offset="100%" stopColor="var(--color-secondary)" />
-                  </linearGradient>
-                </defs>
-                <circle cx="20" cy="20" r="18" fill="url(#logoGradient)" opacity="0.1" />
-                <path 
-                  d="M12 28c0-4.4 3.6-8 8-8s8 3.6 8 8M20 12v8M16 16l8 8M24 16l-8 8" 
-                  stroke="var(--color-primary)" 
-                  strokeWidth="2" 
-                  fill="none"
-                  className="transition-colors duration-300 group-hover:stroke-accent"
-                />
-              </svg>
-              <div className="absolute inset-0 scent-particles opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="font-display font-bold text-xl text-primary breathing-text">
-                Azmeera
-              </h1>
-              <p className="font-accent text-sm text-secondary -mt-1">
-                Perfume
-              </p>
-            </div>
-          </Link>
+    <>
+      <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-luxury">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            
+            {/* Logo - Left Side */}
+            <Link to="/homepage-luxury-fragrance-discovery" className="flex items-center space-x-2">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-accent rounded-full flex items-center justify-center">
+                <Icon name="Droplets" size={20} className="text-accent-foreground sm:w-6 sm:h-6" />
+              </div>
+              <div>
+                <h1 className="font-display font-bold text-lg sm:text-xl text-primary">Rizlun</h1>
+                <p className="font-accent text-xs sm:text-sm text-secondary">Perfume</p>
+              </div>
+            </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            {navigationItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-300 scent-trail ${
-                  isActivePath(item.path)
-                    ? 'text-accent bg-accent/10 shadow-luxury'
-                    : 'text-text-primary hover:text-accent hover:bg-accent/5'
-                }`}
-              >
-                <Icon name={item.icon} size={18} />
-                <span className="font-body font-medium">{item.name}</span>
-              </Link>
-            ))}
-          </nav>
+            {/* Desktop Navigation & Actions - Right Side */}
+            <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+              {/* Navigation Items */}
+              {navigation.slice(0, 4).map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="font-body font-medium text-text-secondary hover:text-primary transition-colors duration-200"
+                >
+                  {item.name}
+                </Link>
+              ))}
 
-          {/* Mobile Menu Button */}
-          <div className="lg:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleMenu}
-              className="relative"
+              {/* Cart Button */}
+              <button
+                onClick={() => setCartVisible(true)}
+                className="relative p-2 rounded-full hover:bg-muted transition-colors duration-200"
+              >
+                <Icon name="ShoppingCart" size={20} className="text-primary" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground rounded-full flex items-center justify-center text-xs font-bold">
+                    {cartItemCount > 99 ? '99+' : cartItemCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Wishlist Button */}
+              <button className="p-2 rounded-full hover:bg-muted transition-colors duration-200">
+                <Icon name="Heart" size={20} className="text-primary" />
+              </button>
+
+              {/* Menu Button */}
+              <div className="relative group">
+                <button className="p-2 rounded-full hover:bg-muted transition-colors duration-200">
+                  <Icon name="Menu" size={20} className="text-primary" />
+                </button>
+                {/* Dropdown Menu */}
+                <div className="absolute right-0 top-full mt-2 w-48 bg-card rounded-lg shadow-luxury-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="py-2">
+                    {navigation.slice(4).map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className="block px-4 py-2 text-sm text-text-secondary hover:text-primary hover:bg-muted transition-colors duration-200"
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                    <div className="border-t border-border my-1"></div>
+                    <Link
+                      to="/fragrance-discovery-tool"
+                      className="block px-4 py-2 text-sm text-accent hover:bg-accent/10 transition-colors duration-200"
+                    >
+                      Find Your Scent
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="lg:hidden w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-muted flex items-center justify-center hover:bg-accent/10 transition-colors duration-200"
             >
               <Icon 
-                name={isMenuOpen ? 'X' : 'Menu'} 
-                size={24} 
-                className="transition-transform duration-300"
+                name={isMenuOpen ? "X" : "Menu"} 
+                size={20} 
+                className="text-primary sm:w-6 sm:h-6" 
               />
-            </Button>
+            </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
-        <div className={`lg:hidden transition-all duration-400 overflow-hidden ${
-          isMenuOpen 
-            ? 'max-h-96 opacity-100 bg-background/95 backdrop-blur-md border-b border-border' :'max-h-0 opacity-0'
-        }`}>
-          <nav className="px-4 py-4 space-y-2">
-            {navigationItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setIsMenuOpen(false)}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
-                  isActivePath(item.path)
-                    ? 'text-accent bg-accent/10 shadow-luxury'
-                    : 'text-text-primary hover:text-accent hover:bg-accent/5'
-                }`}
-              >
-                <Icon name={item.icon} size={20} />
-                <span className="font-body font-medium">{item.name}</span>
-              </Link>
-            ))}
-            
-            {/* Mobile CTA */}
-            <div className="pt-4 mt-4 border-t border-border">
-              <Button 
-                variant="default" 
-                fullWidth 
-                className="bg-luxury-gold hover:bg-luxury-amber"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Link to="/fragrance-discovery-tool" className="w-full">
-                  Start Your Scent Journey
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="lg:hidden bg-background/95 backdrop-blur-md border-t border-border">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <nav className="flex flex-col space-y-1">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="font-body font-medium text-text-secondary hover:text-primary py-2 px-3 rounded-lg hover:bg-muted transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </nav>
+              {/* Mobile Actions */}
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
+                <div className="flex items-center space-x-2">
+                  {/* Cart Button */}
+                  <button
+                    onClick={() => {
+                      setCartVisible(true);
+                      setIsMenuOpen(false);
+                    }}
+                    className="relative p-2 rounded-full hover:bg-muted transition-colors duration-200"
+                  >
+                    <Icon name="ShoppingCart" size={20} className="text-primary" />
+                    {cartItemCount > 0 && (
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground rounded-full flex items-center justify-center text-xs font-bold">
+                        {cartItemCount > 99 ? '99+' : cartItemCount}
+                      </span>
+                    )}
+                  </button>
+                  {/* Wishlist Button */}
+                  <button className="p-2 rounded-full hover:bg-muted transition-colors duration-200">
+                    <Icon name="Heart" size={20} className="text-primary" />
+                  </button>
+                </div>
+                <Link to="/fragrance-discovery-tool" onClick={() => setIsMenuOpen(false)}>
+                  <Button 
+                    variant="default" 
+                    size="sm"
+                    className="bg-luxury-gold hover:bg-luxury-amber text-sm sm:text-base"
+                  >
+                    Find Your Scent
+                  </Button>
                 </Link>
-              </Button>
+              </div>
             </div>
-          </nav>
-        </div>
-      </div>
-    </header>
+          </div>
+        )}
+      </header>
+      {/* Cart Modal */}
+      {isCartVisible && <Cart />}
+    </>
   );
 };
 

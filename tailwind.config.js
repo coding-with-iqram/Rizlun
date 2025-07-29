@@ -9,11 +9,29 @@ module.exports = {
   ],
   prefix: "",
   theme: {
+    screens: {
+      'xs': '475px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: '1rem',
+        sm: '1.5rem',
+        lg: '2rem',
+        xl: '2.5rem',
+        '2xl': '3rem',
+      },
       screens: {
-        "2xl": "1400px",
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1400px',
       },
     },
     extend: {
@@ -111,6 +129,10 @@ module.exports = {
         'citrus-breathing': 'citrusBreathing 4s ease-in-out infinite',
         'floral-breathing': 'floralBreathing 4s ease-in-out infinite',
         'woody-breathing': 'woodyBreathing 4s ease-in-out infinite',
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+        'slide-down': 'slideDown 0.5s ease-out',
+        'scale-in': 'scaleIn 0.3s ease-out',
       },
       keyframes: {
         breathingRhythm: {
@@ -139,6 +161,22 @@ module.exports = {
           '0%, 100%': { filter: 'hue-rotate(0deg) saturate(1)' },
           '50%': { filter: 'hue-rotate(10deg) saturate(0.9)' },
         },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
       },
       backdropBlur: {
         xs: '2px',
@@ -150,9 +188,38 @@ module.exports = {
         '400': '400ms',
         '600': '600ms',
       },
+      aspectRatio: {
+        'auto': 'auto',
+        'square': '1 / 1',
+        'video': '16 / 9',
+        'portrait': '3 / 4',
+        'landscape': '4 / 3',
+        'ultrawide': '21 / 9',
+      },
+      minHeight: {
+        'screen-75': '75vh',
+        'screen-80': '80vh',
+        'screen-85': '85vh',
+        'screen-90': '90vh',
+      },
+      maxWidth: {
+        '8xl': '88rem',
+        '9xl': '96rem',
+      },
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
+      },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
+    require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/container-queries"),
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/forms"),
   ],
 }

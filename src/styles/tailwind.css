@@ -65,6 +65,9 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    /* Improve mobile scrolling */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
   
   /* Typography Base Styles */
@@ -78,6 +81,77 @@
   
   .font-accent {
     font-family: 'Dancing Script', cursive;
+  }
+
+  /* Responsive Typography */
+  .text-responsive-xs {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .text-responsive-sm {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-responsive-base {
+    @apply text-base sm:text-lg;
+  }
+  
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .text-responsive-xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-2xl sm:text-3xl;
+  }
+  
+  .text-responsive-3xl {
+    @apply text-3xl sm:text-4xl;
+  }
+  
+  .text-responsive-4xl {
+    @apply text-4xl sm:text-5xl;
+  }
+  
+  .text-responsive-5xl {
+    @apply text-5xl sm:text-6xl;
+  }
+
+  /* Mobile-first spacing utilities */
+  .space-responsive-xs {
+    @apply space-y-2 sm:space-y-3;
+  }
+  
+  .space-responsive-sm {
+    @apply space-y-3 sm:space-y-4;
+  }
+  
+  .space-responsive-md {
+    @apply space-y-4 sm:space-y-6;
+  }
+  
+  .space-responsive-lg {
+    @apply space-y-6 sm:space-y-8;
+  }
+  
+  .space-responsive-xl {
+    @apply space-y-8 sm:space-y-12;
+  }
+
+  /* Touch-friendly button sizes */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  .touch-target-sm {
+    @apply min-h-[40px] min-w-[40px];
+  }
+  
+  .touch-target-lg {
+    @apply min-h-[48px] min-w-[48px];
   }
 }
 
@@ -139,74 +213,184 @@
   .scent-trail::after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, transparent 70%);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
     pointer-events: none;
   }
   
   .scent-trail:hover::after {
-    width: 100px;
-    height: 100px;
-  }
-  
-  /* Synesthetic Color Breathing */
-  .color-breathing-citrus {
-    background: linear-gradient(135deg, #FFF8DC, #F0E68C);
-    animation: citrusBreathing 4s ease-in-out infinite;
-  }
-  
-  .color-breathing-floral {
-    background: linear-gradient(135deg, #FFE4E1, #DDA0DD);
-    animation: floralBreathing 4s ease-in-out infinite;
-  }
-  
-  .color-breathing-woody {
-    background: linear-gradient(135deg, #D2B48C, #8B4513);
-    animation: woodyBreathing 4s ease-in-out infinite;
-  }
-  
-  @keyframes citrusBreathing {
-    0%, 100% { filter: hue-rotate(0deg) saturate(1); }
-    50% { filter: hue-rotate(15deg) saturate(1.1); }
-  }
-  
-  @keyframes floralBreathing {
-    0%, 100% { filter: hue-rotate(0deg) saturate(1); }
-    50% { filter: hue-rotate(-10deg) saturate(1.1); }
-  }
-  
-  @keyframes woodyBreathing {
-    0%, 100% { filter: hue-rotate(0deg) saturate(1); }
-    50% { filter: hue-rotate(10deg) saturate(0.9); }
-  }
-  
-  /* Scent Memory Fade Transitions */
-  .scent-fade-enter {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  
-  .scent-fade-enter-active {
     opacity: 1;
-    transform: translateX(0);
-    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Responsive Container */
+  .container-responsive {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+    max-width: 1280px;
+  }
+
+  /* Mobile-first Grid System */
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8;
   }
   
-  .scent-fade-exit {
-    opacity: 1;
-    transform: translateX(0);
+  .grid-responsive-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8;
   }
   
-  .scent-fade-exit-active {
-    opacity: 0;
-    transform: translateX(-30px);
-    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  .grid-responsive-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8;
+  }
+
+  /* Responsive Card */
+  .card-responsive {
+    @apply bg-card rounded-lg sm:rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-luxury;
+  }
+
+  /* Responsive Section */
+  .section-responsive {
+    @apply py-8 sm:py-12 lg:py-16 xl:py-20;
+  }
+
+  /* Mobile Navigation */
+  .mobile-nav {
+    @apply fixed inset-0 z-50 bg-background/95 backdrop-blur-md lg:hidden;
+  }
+  
+  .mobile-nav-content {
+    @apply flex flex-col h-full pt-16 pb-4 px-4;
+  }
+
+  /* Touch-friendly Interactive Elements */
+  .touch-friendly {
+    @apply touch-target cursor-pointer select-none;
+  }
+  
+  .touch-friendly-sm {
+    @apply touch-target-sm cursor-pointer select-none;
+  }
+  
+  .touch-friendly-lg {
+    @apply touch-target-lg cursor-pointer select-none;
+  }
+
+  /* Responsive Image */
+  .image-responsive {
+    @apply w-full h-auto object-cover;
+  }
+  
+  .image-responsive-square {
+    @apply w-full aspect-square object-cover;
+  }
+  
+  .image-responsive-video {
+    @apply w-full aspect-video object-cover;
+  }
+
+  /* Responsive Text Container */
+  .text-container {
+    @apply max-w-prose mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .text-container-sm {
+    @apply max-w-2xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .text-container-lg {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Responsive Button Group */
+  .button-group-responsive {
+    @apply flex flex-col sm:flex-row gap-3 sm:gap-4;
+  }
+  
+  .button-group-responsive-center {
+    @apply flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center;
+  }
+  
+  .button-group-responsive-start {
+    @apply flex flex-col sm:flex-row gap-3 sm:gap-4 justify-start;
+  }
+
+  /* Responsive Form */
+  .form-responsive {
+    @apply space-y-4 sm:space-y-6;
+  }
+  
+  .form-group-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6;
+  }
+
+  /* Responsive Table */
+  .table-responsive {
+    @apply overflow-x-auto;
+  }
+  
+  .table-responsive table {
+    @apply min-w-full;
+  }
+
+  /* Responsive Modal */
+  .modal-responsive {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6;
+  }
+  
+  .modal-content-responsive {
+    @apply bg-card rounded-lg sm:rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl w-full max-h-[90vh] overflow-y-auto;
+  }
+
+  /* Responsive Sidebar */
+  .sidebar-responsive {
+    @apply fixed inset-y-0 left-0 z-40 w-64 sm:w-80 bg-background border-r border-border transform transition-transform duration-300 lg:translate-x-0;
+  }
+  
+  .sidebar-responsive.closed {
+    @apply -translate-x-full lg:translate-x-0;
+  }
+
+  /* Responsive Hero */
+  .hero-responsive {
+    @apply min-h-[60vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center justify-center;
+  }
+  
+  .hero-content-responsive {
+    @apply text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto;
+  }
+
+  /* Responsive Carousel */
+  .carousel-responsive {
+    @apply relative overflow-hidden rounded-lg sm:rounded-xl lg:rounded-2xl;
+  }
+  
+  .carousel-track-responsive {
+    @apply flex transition-transform duration-500 ease-in-out;
+  }
+  
+  .carousel-slide-responsive {
+    @apply w-full flex-shrink-0;
+  }
+
+  /* Responsive Navigation */
+  .nav-responsive {
+    @apply hidden lg:flex items-center space-x-6 xl:space-x-8;
+  }
+  
+  .nav-mobile-responsive {
+    @apply lg:hidden;
+  }
+
+  /* Responsive Footer */
+  .footer-responsive {
+    @apply py-8 sm:py-12 lg:py-16 bg-surface;
+  }
+  
+  .footer-content-responsive {
+    @apply container-responsive grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8;
   }
 }
 
@@ -251,4 +435,69 @@
   .parallax-fast {
     transform: translate3d(0, calc(var(--scroll-y, 0) * 0.8px), 0);
   }
+
+  /* Responsive Visibility */
+  .visible-mobile { @apply block sm:hidden; }
+  .visible-tablet { @apply hidden sm:block lg:hidden; }
+  .visible-desktop { @apply hidden lg:block; }
+  
+  .hidden-mobile { @apply hidden sm:block; }
+  .hidden-tablet { @apply block sm:hidden lg:block; }
+  .hidden-desktop { @apply block lg:hidden; }
+
+  /* Responsive Padding */
+  .p-responsive-xs { @apply p-2 sm:p-3 lg:p-4; }
+  .p-responsive-sm { @apply p-3 sm:p-4 lg:p-6; }
+  .p-responsive-md { @apply p-4 sm:p-6 lg:p-8; }
+  .p-responsive-lg { @apply p-6 sm:p-8 lg:p-12; }
+  .p-responsive-xl { @apply p-8 sm:p-12 lg:p-16; }
+
+  /* Responsive Margin */
+  .m-responsive-xs { @apply m-2 sm:m-3 lg:m-4; }
+  .m-responsive-sm { @apply m-3 sm:m-4 lg:m-6; }
+  .m-responsive-md { @apply m-4 sm:m-6 lg:m-8; }
+  .m-responsive-lg { @apply m-6 sm:m-8 lg:m-12; }
+  .m-responsive-xl { @apply m-8 sm:m-12 lg:m-16; }
+
+  /* Responsive Gap */
+  .gap-responsive-xs { @apply gap-2 sm:gap-3 lg:gap-4; }
+  .gap-responsive-sm { @apply gap-3 sm:gap-4 lg:gap-6; }
+  .gap-responsive-md { @apply gap-4 sm:gap-6 lg:gap-8; }
+  .gap-responsive-lg { @apply gap-6 sm:gap-8 lg:gap-12; }
+  .gap-responsive-xl { @apply gap-8 sm:gap-12 lg:gap-16; }
+
+  /* Responsive Border Radius */
+  .rounded-responsive-sm { @apply rounded-md sm:rounded-lg lg:rounded-xl; }
+  .rounded-responsive-md { @apply rounded-lg sm:rounded-xl lg:rounded-2xl; }
+  .rounded-responsive-lg { @apply rounded-xl sm:rounded-2xl lg:rounded-3xl; }
+
+  /* Responsive Shadow */
+  .shadow-responsive-sm { @apply shadow-sm sm:shadow-md lg:shadow-lg; }
+  .shadow-responsive-md { @apply shadow-md sm:shadow-lg lg:shadow-xl; }
+  .shadow-responsive-lg { @apply shadow-lg sm:shadow-xl lg:shadow-2xl; }
+
+  /* Safe Area Utilities for Mobile */
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-left { padding-left: env(safe-area-inset-left); }
+  .safe-right { padding-right: env(safe-area-inset-right); }
+  
+  .safe-y { 
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-x { 
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Mobile-specific utilities */
+  .mobile-only { @apply sm:hidden; }
+  .tablet-up { @apply hidden sm:block; }
+  .desktop-up { @apply hidden lg:block; }
+  
+  .mobile-down { @apply block sm:hidden; }
+  .tablet-down { @apply block lg:hidden; }
+  .desktop-down { @apply block xl:hidden; }
 }
