@@ -1,240 +1,456 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
+import { motion } from 'framer-motion';
+import { Filter, Grid, List, Search } from 'lucide-react';
 import ProductCard from '../../../components/ProductCard';
-import { products, getBestSellers, getNewArrivals, getLimitedEdition } from '../../../data/products';
+import { 
+  perfumes, 
+  categories,
+  getPerfumesByCategory,
+  getFeaturedPerfumes,
+  getBestSellers,
+  getNewArrivals,
+  searchPerfumes,
+  filterPerfumes,
+  scentFamilies
+} from '../../../data/perfumes';
 
-const ProductsSection = ({ onAddToCart, onAddToWishlist }) => {
-  const [activeTab, setActiveTab] = useState('featured');
+const ProductsSection = ({ onAddToCart, onAddToWishlist, selectedCategory, onCategoryChange }) => {
+  const [activeTab, setActiveTab] = useState(selectedCategory || 'Featured');
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [showAll, setShowAll] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState('grid');
+  const [sortBy, setSortBy] = useState('featured');
+  const [filters, setFilters] = useState({
+    scentFamily: [],
+    priceRange: { min: 0, max: 200 },
+    inStock: true
+  });
 
   const tabs = [
-    { id: 'featured', label: 'Featured', icon: 'Star' },
-    { id: 'new', label: 'New Arrivals', icon: 'Sparkles' },
-    { id: 'limited', label: 'Limited Edition', icon: 'Clock' },
-    { id: 'bestsellers', label: 'Best Sellers', icon: 'TrendingUp' }
+    { id: 'Featured', label: 'Featured', icon: '⭐' },
+    { id: 'New Arrivals', label: 'New Arrivals', icon: '✨' },
+    { id: 'Limited Edition', label: 'Limited Edition', icon: '⏰' },
+    { id: 'Best Sellers', label: 'Best Sellers', icon: '📈' }
+  ];
+
+  const sortOptions = [
+    { value: 'featured', label: 'Featured' },
+    { value: 'price-low', label: 'Price: Low to High' },
+    { value: 'price-high', label: 'Price: High to Low' },
+    { value: 'rating', label: 'Highest Rated' },
+    { value: 'newest', label: 'Newest First' }
   ];
 
   useEffect(() => {
     let filteredProducts = [];
     
+    // Get products by category
     switch (activeTab) {
-      case 'featured':
-        filteredProducts = products.slice(0, 6);
+      case 'Featured':
+        filteredProducts = getFeaturedPerfumes();
         break;
-      case 'new':
+      case 'New Arrivals':
         filteredProducts = getNewArrivals();
         break;
-      case 'limited':
-        filteredProducts = getLimitedEdition();
+      case 'Limited Edition':
+        filteredProducts = getPerfumesByCategory(categories.LIMITED_EDITION);
         break;
-      case 'bestsellers':
+      case 'Best Sellers':
         filteredProducts = getBestSellers();
         break;
       default:
-        filteredProducts = products.slice(0, 6);
+        filteredProducts = perfumes;
+    }
+
+    // Apply search
+    if (searchQuery) {
+      filteredProducts = searchPerfumes(searchQuery);
+    }
+
+    // Apply filters
+    filteredProducts = filterPerfumes({
+      ...filters,
+      products: filteredProducts
+    });
+
+    // Apply sorting
+    switch (sortBy) {
+      case 'price-low':
+        filteredProducts.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filteredProducts.sort((a, b) => b.price - a.price);
+        break;
+      case 'rating':
+        filteredProducts.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'newest':
+        filteredProducts.sort((a, b) => b.isNew - a.isNew);
+        break;
+      default:
+        // Keep original order for featured
+        break;
     }
 
     setDisplayedProducts(showAll ? filteredProducts : filteredProducts.slice(0, 6));
-  }, [activeTab, showAll]);
+  }, [activeTab, showAll, searchQuery, filters, sortBy]);
 
-  const handleAddToCart = (product) => {
-    if (onAddToCart) {
-      onAddToCart(product);
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setShowAll(false);
+    setSearchQuery('');
+    if (onCategoryChange) {
+      onCategoryChange(tabId);
     }
   };
 
-  const handleAddToWishlist = (product) => {
-    if (onAddToWishlist) {
-      onAddToWishlist(product);
+  const handleFilterChange = (newFilters) => {
+    setFilters({ ...filters, ...newFilters });
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      scentFamily: [],
+      priceRange: { min: 0, max: 200 },
+      inStock: true
+    });
+    setSearchQuery('');
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
     }
   };
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-background to-surface">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 bg-gradient-to-b from-background to-surface/50">
+      <div className="container-luxury">
         
         {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-primary mb-3 sm:mb-4">
-            Shop Our Collection
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4">
+            Curated Fragrance Collection
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-text-secondary font-body max-w-2xl mx-auto px-4">
-            Discover our curated selection of luxury fragrances, each crafted with the finest ingredients and designed to become part of your unique story.
+          <p className="text-lg text-text-secondary max-w-3xl mx-auto">
+            Discover our handpicked selection of luxury fragrances, each telling a unique story 
+            and crafted with the finest ingredients from around the world.
           </p>
-        </div>
+        </motion.div>
+
+        {/* Search and Filters */}
+        <motion.div 
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-6">
+            {/* Search Bar */}
+            <div className="relative flex-1 max-w-md">
+              <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary" />
+              <input
+                type="text"
+                placeholder="Search fragrances..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="luxury-input pl-10 w-full"
+              />
+            </div>
+
+            {/* Controls */}
+            <div className="flex items-center gap-4">
+              {/* Sort Dropdown */}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="luxury-input min-w-[180px]"
+              >
+                {sortOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+
+              {/* View Mode Toggle */}
+              <div className="flex border border-border rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 transition-colors ${
+                    viewMode === 'grid' 
+                      ? 'bg-accent text-accent-foreground' 
+                      : 'bg-background hover:bg-muted'
+                  }`}
+                >
+                  <Grid size={18} />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 transition-colors ${
+                    viewMode === 'list' 
+                      ? 'bg-accent text-accent-foreground' 
+                      : 'bg-background hover:bg-muted'
+                  }`}
+                >
+                  <List size={18} />
+                </button>
+              </div>
+
+              {/* Filter Toggle */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`btn-secondary flex items-center gap-2 ${
+                  showFilters ? 'bg-accent/10' : ''
+                }`}
+              >
+                <Filter size={18} />
+                <span>Filters</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Filter Panel */}
+          {showFilters && (
+            <motion.div
+              className="luxury-card p-6 mb-6"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Scent Family Filter */}
+                <div>
+                  <h3 className="font-semibold text-primary mb-3">Scent Family</h3>
+                  <div className="space-y-2">
+                    {Object.values(scentFamilies).map(family => (
+                      <label key={family} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={filters.scentFamily.includes(family)}
+                          onChange={(e) => {
+                            const newScentFamily = e.target.checked
+                              ? [...filters.scentFamily, family]
+                              : filters.scentFamily.filter(f => f !== family);
+                            handleFilterChange({ scentFamily: newScentFamily });
+                          }}
+                          className="rounded border-border text-accent focus:ring-accent"
+                        />
+                        <span className="text-sm">{family}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Price Range Filter */}
+                <div>
+                  <h3 className="font-semibold text-primary mb-3">Price Range</h3>
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={filters.priceRange.min}
+                        onChange={(e) => handleFilterChange({
+                          priceRange: { ...filters.priceRange, min: Number(e.target.value) }
+                        })}
+                        className="luxury-input text-sm"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={filters.priceRange.max}
+                        onChange={(e) => handleFilterChange({
+                          priceRange: { ...filters.priceRange, max: Number(e.target.value) }
+                        })}
+                        className="luxury-input text-sm"
+                      />
+                    </div>
+                    <div className="text-sm text-text-secondary">
+                      ${filters.priceRange.min} - ${filters.priceRange.max}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Availability Filter */}
+                <div>
+                  <h3 className="font-semibold text-primary mb-3">Availability</h3>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={filters.inStock}
+                      onChange={(e) => handleFilterChange({ inStock: e.target.checked })}
+                      className="rounded border-border text-accent focus:ring-accent"
+                    />
+                    <span className="text-sm">In Stock Only</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mt-6 pt-4 border-t border-border">
+                <div className="text-sm text-text-secondary">
+                  {displayedProducts.length} product(s) found
+                </div>
+                <button
+                  onClick={clearFilters}
+                  className="btn-ghost text-sm"
+                >
+                  Clear All Filters
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
 
         {/* Tab Navigation */}
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12">
+        <motion.div 
+          className="flex flex-wrap justify-center gap-3 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
           {tabs.map((tab) => (
-            <button
+            <motion.button
               key={tab.id}
-              onClick={() => {
-                setActiveTab(tab.id);
-                setShowAll(false);
-              }}
-              className={`flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full font-body font-medium transition-all duration-300 ${
+              onClick={() => handleTabChange(tab.id)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
                 activeTab === tab.id
                   ? 'bg-accent text-accent-foreground shadow-luxury'
                   : 'bg-muted text-text-secondary hover:text-primary hover:bg-accent/10'
               }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <Icon name={tab.icon} size={16} className="sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">{tab.label}</span>
-            </button>
+              <span className="text-lg">{tab.icon}</span>
+              <span>{tab.label}</span>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
-          {displayedProducts.map((product) => (
-            <ProductCard
+        <motion.div
+          className={`grid gap-6 mb-12 ${
+            viewMode === 'grid'
+              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+              : 'grid-cols-1'
+          }`}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          {displayedProducts.map((product, index) => (
+            <motion.div
               key={product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
-              onAddToWishlist={handleAddToWishlist}
-            />
+              variants={itemVariants}
+              custom={index}
+            >
+              <ProductCard
+                product={product}
+                onAddToCart={onAddToCart}
+                onAddToWishlist={onAddToWishlist}
+                viewMode={viewMode}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Load More / View All Button */}
         {displayedProducts.length > 0 && (
-          <div className="text-center">
+          <motion.div 
+            className="text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             {!showAll ? (
-              <Button
+              <motion.button
                 onClick={() => setShowAll(true)}
-                variant="outline"
-                size="lg"
-                className="border-accent text-accent hover:bg-accent/10"
-                iconName="ArrowDown"
-                iconPosition="right"
+                className="btn-secondary text-lg px-8 py-4"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                View All {activeTab === 'featured' ? 'Products' : tabs.find(t => t.id === activeTab)?.label}
-              </Button>
+                View All {activeTab}
+              </motion.button>
             ) : (
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
+                <motion.button
                   onClick={() => setShowAll(false)}
-                  variant="outline"
-                  size="lg"
-                  className="border-accent text-accent hover:bg-accent/10"
-                  iconName="ArrowUp"
-                  iconPosition="right"
+                  className="btn-ghost"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   Show Less
-                </Button>
+                </motion.button>
                 <Link to="/collections-gallery">
-                  <Button
-                    variant="default"
-                    size="lg"
-                    className="bg-luxury-gold hover:bg-luxury-amber"
-                    iconName="Grid3X3"
-                    iconPosition="right"
+                  <motion.button
+                    className="btn-primary"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     Browse All Collections
-                  </Button>
+                  </motion.button>
                 </Link>
               </div>
             )}
-          </div>
+          </motion.div>
         )}
 
         {/* Empty State */}
         {displayedProducts.length === 0 && (
-          <div className="text-center py-12">
-            <Icon name="Package" size={48} className="text-text-secondary mx-auto mb-4" />
-            <h3 className="font-display font-bold text-xl text-primary mb-2">
-              No products found
+          <motion.div 
+            className="text-center py-16"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
+              <Search size={32} className="text-text-secondary" />
+            </div>
+            <h3 className="font-display text-xl font-bold text-primary mb-2">
+              No fragrances found
             </h3>
-            <p className="text-text-secondary font-body mb-4">
-              Check back soon for new arrivals in this category.
+            <p className="text-text-secondary mb-6 max-w-md mx-auto">
+              Try adjusting your filters or search terms to discover more fragrances.
             </p>
-            <Link to="/collections-gallery">
-              <Button
-                variant="outline"
-                className="border-accent text-accent hover:bg-accent/10"
-              >
-                Browse All Products
-              </Button>
-            </Link>
-          </div>
+            <button
+              onClick={clearFilters}
+              className="btn-secondary"
+            >
+              Clear All Filters
+            </button>
+          </motion.div>
         )}
-
-        {/* Shopping Features */}
-        <div className="mt-16 sm:mt-20 lg:mt-24">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="Shield" size={24} className="text-accent" />
-              </div>
-              <h3 className="font-display font-semibold text-primary mb-2">Authenticity Guaranteed</h3>
-              <p className="text-text-secondary text-sm">Every fragrance is authentic and sourced directly from the finest perfumeries.</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="Truck" size={24} className="text-accent" />
-              </div>
-              <h3 className="font-display font-semibold text-primary mb-2">Free Samples</h3>
-              <p className="text-text-secondary text-sm">Try before you buy with our complimentary sample program.</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="Heart" size={24} className="text-accent" />
-              </div>
-              <h3 className="font-display font-semibold text-primary mb-2">Personalized Service</h3>
-              <p className="text-text-secondary text-sm">Get expert guidance to find your perfect signature scent.</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="RefreshCw" size={24} className="text-accent" />
-              </div>
-              <h3 className="font-display font-semibold text-primary mb-2">Easy Returns</h3>
-              <p className="text-text-secondary text-sm">30-day return policy for your complete peace of mind.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Purchase CTA */}
-        <div className="mt-12 sm:mt-16 text-center">
-          <div className="bg-gradient-to-r from-accent/10 to-secondary/10 rounded-2xl p-6 sm:p-8">
-            <h3 className="font-display font-bold text-xl sm:text-2xl text-primary mb-3">
-              Ready to Find Your Signature Scent?
-            </h3>
-            <p className="text-text-secondary font-body mb-6 max-w-2xl mx-auto">
-              Start your fragrance journey today with our expert-curated collection. 
-              Add your favorites to cart and experience luxury perfumery at its finest.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/collections-gallery">
-                <Button
-                  variant="default"
-                  size="lg"
-                  className="bg-luxury-gold hover:bg-luxury-amber"
-                  iconName="ShoppingCart"
-                  iconPosition="right"
-                >
-                  Shop Now
-                </Button>
-              </Link>
-              <Link to="/fragrance-discovery-tool">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-accent text-accent hover:bg-accent/10"
-                  iconName="Search"
-                  iconPosition="right"
-                >
-                  Take Scent Quiz
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
