@@ -6,7 +6,7 @@ import Icon from '../../components/AppIcon';
 import MoodSelector from './components/MoodSelector';
 import ScentMemoryExplorer from './components/ScentMemoryExplorer';
 import LifestyleQuestions from './components/LifestyleQuestions';
-import ScentFamilyEducation from './components/ScentFamilyEducation';
+// import ScentFamilyEducation from './components/ScentFamilyEducation';
 import ScentPersonalityQuiz from './components/ScentPersonalityQuiz';
 import FragranceRecommendations from './components/FragranceRecommendations';
 import ProgressIndicator from './components/ProgressIndicator';
@@ -116,21 +116,21 @@ const FragranceDiscoveryTool = () => {
             onLifestyleSelect={handleLifestyleSelect}
           />
         );
+      // case 4:
+      //   return (
+      //     <ScentFamilyEducation
+      //       selectedFamily={userProfile.scentFamily}
+      //       onFamilySelect={handleFamilySelect}
+      //     />
+      //   );
       case 4:
-        return (
-          <ScentFamilyEducation
-            selectedFamily={userProfile.scentFamily}
-            onFamilySelect={handleFamilySelect}
-          />
-        );
-      case 5:
         return (
           <ScentPersonalityQuiz
             selectedPersonality={userProfile.personality}
             onPersonalitySelect={handlePersonalitySelect}
           />
         );
-      case 6:
+      case 5:
         return (
           <FragranceRecommendations
             userProfile={userProfile}
